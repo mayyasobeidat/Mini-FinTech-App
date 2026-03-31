@@ -91,8 +91,8 @@ function initUI() {
             <span class="small fw-bold d-block mb-1 opacity-75">${balance >= 0 ? 'رصيد متوفر' : 'مديونية مطلوبة'}</span>
             <span class="balance-val">${Math.abs(balance).toFixed(2)} <small style="font-size: 0.9rem">د.أ</small></span>
           </div>
-          <div class="px-3 pb-2">
-            <button class="btn btn-sm btn-outline-secondary w-100" onclick="downloadPDF(${index}, '${name}')">
+         <div class="px-3 pb-2">
+            <button class="btn btn-sm btn-outline-secondary w-100" id="pdf-btn-${index}" onclick="downloadPDF(${index}, '${name}')">
               <i class="bi bi-file-earmark-pdf me-1"></i> تحميل الكشف PDF
             </button>
           </div>
