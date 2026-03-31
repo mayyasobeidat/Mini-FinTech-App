@@ -55,7 +55,7 @@ function getActivities(name) {
   if (allData.deposits) {
     allData.deposits.forEach(d => {
       if (d[1] === name) {
-        acts.push({ date: d[0], type: 'dep', title: 'إيداع / تحويل', amount: parseFloat(d[2]) });
+        acts.push({ date: d[0], type: 'dep', title: 'إيداع - تحويل', amount: parseFloat(d[2]) });
       }
     });
   }
