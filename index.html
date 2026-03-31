@@ -16,10 +16,11 @@
     }
 
     html, body { 
-      height: 100%; overflow: hidden; 
-      background-color: #f8f9fa; 
-      font-family: 'Segoe UI', Tahoma, sans-serif; 
-      margin: 0; padding: 0;
+     height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* لمنع السكرول الخارجي المزعج */
+  margin: 0;
     }
     
     .header-section { 
@@ -64,27 +65,22 @@
     .nav-link.active .text-pos, .nav-link.active .text-neg { color: rgba(255,255,255,0.95); }
 
     .main-container {
- flex-grow: 1; /* يجعله يأخذ كل المساحة المتبقية من الشاشة */
+flex-grow: 1; 
+  overflow: hidden; /* لمنع تمدد الحاوية لأسفل */
   display: flex;
   flex-direction: column;
-  padding: 0 10px 10px 10px;
-  overflow: hidden; /* يمنع الحاوية الكبيرة من التمدد خارج الشاشة */
+  padding: 10px;
     }
 
-    .account-card { 
-background: white; 
-  border-radius: 24px; 
-  border: 1px solid #f0f0f0; 
-  box-shadow: 0 4px 20px rgba(0,0,0,0.03); 
-  display: flex; 
+.account-card {
+  display: flex;
   flex-direction: column;
-  height: 100%; /* مهم جداً لكي يحترم حدود الأب */
-  max-height: 100%; 
+  height: 100%; /* سيأخذ طول الـ main-container بالضبط */
+  max-height: 100%;
+  background: white;
+  border-radius: 24px;
   overflow: hidden;
-  max-width: 600px; 
-  margin: auto; 
-  width: 100%;
-    }
+}
 
     .summary-box { padding: 15px 20px; text-align: center; flex-shrink: 0; }
     .status-pos { background-color: var(--pos-bg); color: var(--pos-color); }
@@ -92,11 +88,19 @@ background: white;
     .balance-val { font-size: 2rem; font-weight: 900; display: block; line-height: 1; }
     
     .items-scroll-area { 
-      flex-grow: 1; 
-  overflow-y: auto; /* هذا هو السطر السحري الذي سيفعل التمرير للعمليات فقط */
+flex-grow: 1; /* ستأخذ كل المساحة المتبقية داخل الكارت */
+  overflow-y: auto; /* سيظهر السكرول هنا فقط عند الحاجة */
   background: #fff;
-  -webkit-overflow-scrolling: touch; /* لتحسين التمرير على الآيفون */
+  border-bottom: 1px solid #f0f0f0;
     }
+    /* لكي يبدو السكرول أنيقاً */
+.items-scroll-area::-webkit-scrollbar {
+  width: 6px;
+}
+.items-scroll-area::-webkit-scrollbar-thumb {
+  background-color: #e0e0e0;
+  border-radius: 10px;
+}
     .transaction-item { padding: 12px 15px; border-bottom: 1px solid #f8f9fa; display: flex; align-items: center; }
     .icon-box { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-left: 12px; font-size: 1rem; flex-shrink: 0; }
     .icon-med { background: #eff6ff; color: #2563eb; }
