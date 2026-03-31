@@ -64,17 +64,26 @@
     .nav-link.active .text-pos, .nav-link.active .text-neg { color: rgba(255,255,255,0.95); }
 
     .main-container {
-      height: calc(100vh - 145px); 
-      display: flex; flex-direction: column;
-      padding: 0 10px 10px 10px;
+ flex-grow: 1; /* يجعله يأخذ كل المساحة المتبقية من الشاشة */
+  display: flex;
+  flex-direction: column;
+  padding: 0 10px 10px 10px;
+  overflow: hidden; /* يمنع الحاوية الكبيرة من التمدد خارج الشاشة */
     }
 
     .account-card { 
-      background: white; border-radius: 24px; border: 1px solid #f0f0f0; 
-      box-shadow: 0 4px 20px rgba(0,0,0,0.03); 
-      display: flex; flex-direction: column;
-      height: 100%; overflow: hidden;
-      max-width: 600px; margin: auto; width: 100%;
+background: white; 
+  border-radius: 24px; 
+  border: 1px solid #f0f0f0; 
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03); 
+  display: flex; 
+  flex-direction: column;
+  height: 100%; /* مهم جداً لكي يحترم حدود الأب */
+  max-height: 100%; 
+  overflow: hidden;
+  max-width: 600px; 
+  margin: auto; 
+  width: 100%;
     }
 
     .summary-box { padding: 15px 20px; text-align: center; flex-shrink: 0; }
@@ -82,7 +91,12 @@
     .status-neg { background-color: var(--neg-bg); color: var(--neg-color); }
     .balance-val { font-size: 2rem; font-weight: 900; display: block; line-height: 1; }
     
-    .items-scroll-area { flex-grow: 1; overflow-y: auto; background: #fff; }
+    .items-scroll-area { 
+      flex-grow: 1; 
+  overflow-y: auto; /* هذا هو السطر السحري الذي سيفعل التمرير للعمليات فقط */
+  background: #fff;
+  -webkit-overflow-scrolling: touch; /* لتحسين التمرير على الآيفون */
+    }
     .transaction-item { padding: 12px 15px; border-bottom: 1px solid #f8f9fa; display: flex; align-items: center; }
     .icon-box { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-left: 12px; font-size: 1rem; flex-shrink: 0; }
     .icon-med { background: #eff6ff; color: #2563eb; }
