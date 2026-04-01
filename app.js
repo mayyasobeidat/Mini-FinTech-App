@@ -1,11 +1,9 @@
-// --- إعدادات الـ API ---
 const API_URL = 'https://script.google.com/macros/s/AKfycbzJUpJDA1VE6ATuyiQagNRDp1zq9Ylat1uEbvLkTeoVs7q54-YC6jzhzXngOlj7joxDTQ/exec'; // ضع رابط جوجل هنا
 
 
 let allData = { wallets: [], transactions: [], deposits: [] };
 let currentPage = [];
 
-// --- دالة جلب البيانات من API جوجل ---
 async function fetchData() {
   try {
     const response = await fetch(`${API_URL}?action=getReport`);
@@ -14,11 +12,10 @@ async function fetchData() {
     initUI();
   } catch (error) {
     console.error("خطأ في جلب البيانات:", error);
-    document.getElementById('loader').innerHTML = `<p class="text-danger">فشل الاتصال بالسيرفر. تأكد من إعدادات CORS ونشر السكريبت.</p>`;
+    document.getElementById('loader').innerHTML = `<p class="text-danger">فشل الاتصال بالسيرفر.</p>`;
   }
 }
 
-// --- معالجة التواريخ لترتيب السجل ---
 function parseDate(str) {
   if (!str) return 0;
   try {
@@ -28,7 +25,6 @@ function parseDate(str) {
   } catch(e) { return 0; }
 }
 
-// --- حساب حجم الصفحة ديناميكياً ---
 function calculatePageSize() {
   const reservedHeight = 330;
   const availableHeight = window.innerHeight - reservedHeight;
@@ -37,7 +33,6 @@ function calculatePageSize() {
   return calculated > 3 ? calculated : 3;
 }
 
-// --- استخراج العمليات لكل شخص ---
 function getActivities(name) {
   let acts = [];
   const brothers = ["محمد", "سماح", "نصر", "عبدالله", "محمود", "عبود", "مياس"];
@@ -55,14 +50,13 @@ function getActivities(name) {
   if (allData.deposits) {
     allData.deposits.forEach(d => {
       if (d[1] === name) {
-        acts.push({ date: d[0], type: 'dep', title: 'إيداع - تحويل', amount: parseFloat(d[2]) });
+        acts.push({ date: d[0], type: 'dep', title: 'تم الدفع بنجاح', amount: parseFloat(d[2]) });
       }
     });
   }
   return acts.sort((a, b) => parseDate(b.date) - parseDate(a.date));
 }
 
-// --- بناء الواجهة بعد استلام البيانات ---
 function initUI() {
   let tabsHtml = '';
   let contentHtml = '';
@@ -80,7 +74,9 @@ function initUI() {
       <li class="nav-item">
         <button class="nav-link ${index===0?'active':''}" id="tab-${index}" data-bs-toggle="pill" data-bs-target="#content-${index}" type="button">
           <span class="tab-name">${name}</span>
-          <span class="tab-balance ${balClass}">${Math.abs(balance).toFixed(2)} د.أ</span>
+        <span class="tab-balance ${balClass}">
+        ${balance < 0 ? '-' : ''}${Math.abs(balance).toFixed(2)} د.أ
+      </span>
         </button>
       </li>`;
 
@@ -93,7 +89,7 @@ function initUI() {
           </div>
          <div class="px-3 pb-2">
             <button class="btn btn-sm btn-outline-secondary w-100" id="pdf-btn-${index}" onclick="downloadPDF(${index}, '${name}')">
-              <i class="bi bi-file-earmark-pdf me-1"></i> تحميل الكشف PDF
+              <i class="bi bi-file-earmark-pdf me-1"></i> تحميل كشف الرصيد PDF
             </button>
           </div>
           <div id="items-container-${index}" class="items-scroll-area"></div>
@@ -111,7 +107,6 @@ function initUI() {
   allData.wallets.forEach((_, index) => renderPage(index));
 }
 
-// --- رندر صفحات السجل لكل شخص ---
 function renderPage(idx) {
   const name = allData.wallets[idx][0];
   const acts = getActivities(name);
@@ -149,11 +144,9 @@ function changePage(idx, dir) {
   renderPage(idx);
 }
 
-// --- تشغيل التطبيق ---
 window.onload = fetchData;
 window.onresize = () => { if(allData.wallets.length) allData.wallets.forEach((_, i) => renderPage(i)); };
 
-// --- وظيفة الـ PDF (تبقى كما هي في كودك الأصلي مع تغيير مصدر البيانات) ---
  function downloadPDF(index, name) {
     const btn = document.getElementById(`pdf-btn-${index}`);
     const originalBtnText = btn.innerHTML;
@@ -166,15 +159,15 @@ window.onresize = () => { if(allData.wallets.length) allData.wallets.forEach((_,
     printElement.style.padding = '20px'; printElement.style.direction = 'rtl';
     printElement.innerHTML = `
       <div style="text-align:center; border-bottom:3px solid #1a73e8; padding-bottom:15px; margin-bottom:25px;">
-        <h2 style="color:#1a73e8;">كشف حساب  ${name}</h2><p>تاريخ الاستخراج: ${dateStr}</p>
+        <h2 style="color:#1a73e8;"> كشف رصيد  ${name}</h2><p>تاريخ الاستخراج :  ${dateStr}</p>
       </div>
       <table style="width:100%; border-collapse:collapse; font-family: sans-serif;">
         <thead><tr style="background:#f1f5f9;"><th style="padding:12px; text-align:right;">التاريخ</th><th style="padding:12px; text-align:right;">الحركة</th><th style="padding:12px; text-align:left;">المبلغ</th></tr></thead>
         <tbody>${acts.map(act => `<tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:10px; font-size:12px;">${act.date}</td><td style="padding:10px;">${act.title}</td><td style="padding:10px; text-align:left; font-weight:bold; color:${act.type==='dep'?'#16a34a':'#b91c1c'}; direction:ltr;">${act.amount.toFixed(2)}</td></tr>`).join('')}</tbody>
       </table>
-      <div style="margin-top:40px; text-align:center;"><p>الرصيد الإجمالي الحالي: <b>${acts.reduce((sum, act) => sum + act.amount, 0).toFixed(2)} د.أ</b></p></div>`;
+      <div style="margin-top:40px; text-align:center;"><p> الرصيد الإجمالي الحالي: <b>${acts.reduce((sum, act) => sum + act.amount, 0).toFixed(2)} د.أ </b></p></div>`;
 
-    html2pdf().set({ margin:10, filename:`كشف_${name}.pdf`, html2canvas:{scale:2}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} })
+    html2pdf().set({ margin:10, filename:`_كشف_رصيد${name}.pdf`, html2canvas:{scale:2}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} })
       .from(printElement).save().then(() => { btn.innerHTML = originalBtnText; btn.disabled = false; });
   }
 
