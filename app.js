@@ -159,15 +159,15 @@ window.onresize = () => { if(allData.wallets.length) allData.wallets.forEach((_,
     printElement.style.padding = '20px'; printElement.style.direction = 'rtl';
     printElement.innerHTML = `
       <div style="text-align:center; border-bottom:3px solid #1a73e8; padding-bottom:15px; margin-bottom:25px;">
-        <h2 style="color:#1a73e8;"> كشف رصيد  ${name}</h2><p>تاريخ الاستخراج :  ${dateStr}</p>
+        <h2 style="color:#1a73e8;">  كشف رصيد&nbsp;${name}</h2><p>تاريخ الاستخراج&nbsp;${dateStr}</p>
       </div>
       <table style="width:100%; border-collapse:collapse; font-family: sans-serif;">
         <thead><tr style="background:#f1f5f9;"><th style="padding:12px; text-align:right;">التاريخ</th><th style="padding:12px; text-align:right;">الحركة</th><th style="padding:12px; text-align:left;">المبلغ</th></tr></thead>
         <tbody>${acts.map(act => `<tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:10px; font-size:12px;">${act.date}</td><td style="padding:10px;">${act.title}</td><td style="padding:10px; text-align:left; font-weight:bold; color:${act.type==='dep'?'#16a34a':'#b91c1c'}; direction:ltr;">${act.amount.toFixed(2)}</td></tr>`).join('')}</tbody>
       </table>
-      <div style="margin-top:40px; text-align:center;"><p> الرصيد الإجمالي الحالي: <b>${acts.reduce((sum, act) => sum + act.amount, 0).toFixed(2)} د.أ </b></p></div>`;
+      <div style="margin-top:40px; text-align:center;"><p> الرصيد الإجمالي الحالي <b>${acts.reduce((sum, act) => sum + act.amount, 0).toFixed(2)} د.أ </b></p></div>`;
 
-    html2pdf().set({ margin:10, filename:`_كشف_رصيد${name}.pdf`, html2canvas:{scale:2}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} })
+    html2pdf().set({ margin:10, filename:`كشف_رصيد_${name}.pdf`, html2canvas:{scale:2}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} })
       .from(printElement).save().then(() => { btn.innerHTML = originalBtnText; btn.disabled = false; });
   }
 
