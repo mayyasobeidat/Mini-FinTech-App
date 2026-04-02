@@ -1,4 +1,4 @@
-const API_URL = 'https://script.google.com/macros/s/AKfycbzJUpJDA1VE6ATuyiQagNRDp1zq9Ylat1uEbvLkTeoVs7q54-YC6jzhzXngOlj7joxDTQ/exec'; // ضع رابط جوجل هنا
+const API_URL = 'https://script.google.com/macros/s/AKfycbwWAba6enDEezMqjUl0ZIev43PcjjX5K4QIJh8rpwRMOuaSq44IktL2IiTulKvnd-teFw/exec'; 
 
 
 let allData = { wallets: [], transactions: [], deposits: [] };
@@ -171,3 +171,12 @@ window.onresize = () => { if(allData.wallets.length) allData.wallets.forEach((_,
       .from(printElement).save().then(() => { btn.innerHTML = originalBtnText; btn.disabled = false; });
   }
 
+function goToAdmin() {
+    const password = prompt("الرجاء إدخال كلمة المرور للدخول لصفحة الإدارة:");
+    
+    if (password === "Mayyas96Ob") { 
+        window.location.href = "admin.html"; 
+    } else if (password !== null) {
+        alert("كلمة المرور خاطئة! لا تملك صلاحية الدخول.");
+    }
+}

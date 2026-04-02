@@ -212,15 +212,23 @@
         .nav-link.active .text-neg {
             color: white;
         }
+
+        .header-section h4 {
+    padding: 0 80px;
+}
     </style>
 </head>
 
 <body>
 
-    <div class="header-section text-center">
-        <h4>حسابات بيت العيلة</h4>
-        <p class="small mb-0 text-muted">أرصدة الأدوية</p>
-    </div>
+<div class="header-section text-center position-relative">
+    <button onclick="goToAdmin()" class="btn btn-sm btn-outline-primary position-absolute end-0 top-50 translate-middle-y me-3" style="font-size: 0.7rem; border-radius: 10px;">
+        <i class="bi bi-gear-fill"></i> إدارة الدفعات
+    </button>
+    
+    <h4>حسابات بيت العيلة</h4>
+    <p class="small mb-0 text-muted">أرصدة الأدوية</p>
+</div>
 
     <div class="nav-tabs-wrapper">
         <ul class="nav nav-pills" id="pills-tab" role="tablist">
