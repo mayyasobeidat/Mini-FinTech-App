@@ -1,0 +1,22 @@
+{
+  "short_name": "بيت العيلة",
+  "name": "Family: Mini-FinTech-App",
+  "icons": [
+    {
+      "src": "logo.jpg",
+      "sizes": "image/jpeg",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ],
+  "start_url": "https://mayyasobeidat.github.io/Mini-FinTech-App/",
+  "background_color": "#1a1a2e",
+  "theme_color": "#1a1a2e",
+  "display": "standalone",
+  "orientation": "portrait",
+  "description": "حسابات بيت العيلة"
+}
