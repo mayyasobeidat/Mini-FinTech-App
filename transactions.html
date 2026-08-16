@@ -62,7 +62,7 @@
   </div>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxMKDiaQdpzc-6RyxjjdYTPDtNFJwZEJ1OkGhzwDMDAWQY8UjIArrw5D8Lv4FTNogO00w/exec'; 
+  const API_URL = 'https://script.google.com/macros/s/AKfycbxMKDiaQdpzc-6RyxjjdYTPDtNFJwZEJ1OkGhzwDMDAWQY8UjIArrw5D8Lv4FTNogO00w/exec'; 
 
   window.onload = function() {
     fetchTransactions();
@@ -74,29 +74,28 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxMKDiaQdpzc-6RyxjjdYTP
     const tbody = document.getElementById('transactions-body');
 
     try {
-      // Fetching transactions sheet data via GET
       const response = await fetch(`${API_URL}?action=getTransactions`);
       const data = await response.json();
 
       tbody.innerHTML = '';
 
       if (data && data.length > 0) {
-        // Reverse array if you want newest transactions at the top
         data.slice().reverse().forEach(row => {
-          const formattedDate = row.date ? new Date(row.date).toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' }) : row[0];
+          // 🔹 التعديل هنا: استخدام دالة التنسيق مباشرة على العنصر الأول من المصفوفة row[0]
+          const formattedDate = formatDate(row[0]);
           
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td><small class="text-muted">${formattedDate}</small></td>
-            <td class="fw-bold text-dark">${row.medName || row[1]}</td>
-            <td><span class="badge badge-amount p-2">${parseFloat(row.total || row[2]).toFixed(2)} د.أ</span></td>
-            <td>${parseFloat(row.mhammad || row[3]).toFixed(2)}</td>
-            <td>${parseFloat(row.samah || row[4]).toFixed(2)}</td>
-            <td>${parseFloat(row.nasr || row[5]).toFixed(2)}</td>
-            <td>${parseFloat(row.abdullah || row[6]).toFixed(2)}</td>
-            <td>${parseFloat(row.mahmoud || row[7]).toFixed(2)}</td>
-            <td>${parseFloat(row.abood || row[8]).toFixed(2)}</td>
-            <td>${parseFloat(row.mayyas || row[9]).toFixed(2)}</td>
+            <td><small class="text-muted" style="direction: ltr; display: inline-block;">${formattedDate}</small></td>
+            <td class="fw-bold text-dark">${row[1] || '-'}</td>
+            <td><span class="badge badge-amount p-2">${parseFloat(row[2] || 0).toFixed(2)} د.أ</span></td>
+            <td>${parseFloat(row[3] || 0).toFixed(2)}</td>
+            <td>${parseFloat(row[4] || 0).toFixed(2)}</td>
+            <td>${parseFloat(row[5] || 0).toFixed(2)}</td>
+            <td>${parseFloat(row[6] || 0).toFixed(2)}</td>
+            <td>${parseFloat(row[7] || 0).toFixed(2)}</td>
+            <td>${parseFloat(row[8] || 0).toFixed(2)}</td>
+            <td>${parseFloat(row[9] || 0).toFixed(2)}</td>
           `;
           tbody.appendChild(tr);
         });
@@ -113,22 +112,22 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxMKDiaQdpzc-6RyxjjdYTP
     }
   }
 
-
+  // دالة تحويل صيغة التاريخ إلى نص عربي مفهوم
   function formatDate(dateString) {
-  if (!dateString || dateString === '-') return '-';
-  
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return dateString; // إذا كان النص ليس تاريخاً، اعرضه كما هو
+    if (!dateString || dateString === '-') return '-';
+    
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString;
 
-  return date.toLocaleString('ar-EG', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
-  });
-}
+    return date.toLocaleString('ar-EG', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  }
 </script>
 </body>
 </html>
