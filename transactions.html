@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سجل الفواتير والحركات - بيت العيلة</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    body { background-color: #f8f9fa; padding: 20px; font-family: 'Segoe UI', sans-serif; }
+    .card { border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-top: 5px solid #1a73e8; }
+    .table th { background-color: #f1f4f9; color: #1a73e8; white-space: nowrap; font-size: 0.9rem; }
+    .table td { vertical-align: middle; font-size: 0.88rem; white-space: nowrap; }
+    .badge-amount { background-color: #e8f0fe; color: #1a73e8; font-weight: bold; }
+  </style>
+</head>
+<body class="p-2 p-md-4">
+  <div class="container-fluid card shadow-sm p-3 p-md-4">
+    
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0 text-primary fw-bold">
+        <i class="bi bi-receipt me-1"></i> سجل الحركات والفواتير
+      </h5>
+      <a href="index.html" class="btn btn-sm btn-outline-secondary d-flex align-items-center" style="border-radius: 10px;">
+        <i class="bi bi-arrow-right-short fs-5"></i>
+        <span>رجوع للأرصدة</span>
+      </a>
+    </div>
+
+    <hr class="mt-0 mb-3 opacity-50">
+
+    <!-- Loading Spinner -->
+    <div id="loader" class="text-center my-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-2 text-muted small">جاري تحميل سجل الفواتير...</p>
+    </div>
+
+    <!-- Transactions Table -->
+    <div id="table-container" class="table-responsive" style="display: none;">
+      <table class="table table-hover table-striped align-middle text-center border">
+        <thead>
+          <tr>
+            <th>التاريخ</th>
+            <th>اسم الدواء</th>
+            <th>المبلغ الإجمالي</th>
+            <th>محمد</th>
+            <th>سماح</th>
+            <th>نصر</th>
+            <th>عبدالله</th>
+            <th>محمود</th>
+            <th>عبود</th>
+            <th>مياس</th>
+          </tr>
+        </thead>
+        <tbody id="transactions-body">
+          <!-- Dynamically filled -->
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+<script>
+  const API_URL = 'https://script.google.com/macros/s/AKfycbwWAba6enDEezMqjUl0ZIev43PcjjX5K4QIJh8rpwRMOuaSq44IktL2IiTulKvnd-teFw/exec';
+
+  window.onload = function() {
+    fetchTransactions();
+  };
+
+  async function fetchTransactions() {
+    const loader = document.getElementById('loader');
+    const container = document.getElementById('table-container');
+    const tbody = document.getElementById('transactions-body');
+
+    try {
+      // Fetching transactions sheet data via GET
+      const response = await fetch(`${API_URL}?action=getTransactions`);
+      const data = await response.json();
+
+      tbody.innerHTML = '';
+
+      if (data && data.length > 0) {
+        // Reverse array if you want newest transactions at the top
+        data.slice().reverse().forEach(row => {
+          const formattedDate = row.date ? new Date(row.date).toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' }) : row[0];
+          
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><small class="text-muted">${formattedDate}</small></td>
+            <td class="fw-bold text-dark">${row.medName || row[1]}</td>
+            <td><span class="badge badge-amount p-2">${parseFloat(row.total || row[2]).toFixed(2)} د.أ</span></td>
+            <td>${parseFloat(row.mhammad || row[3]).toFixed(2)}</td>
+            <td>${parseFloat(row.samah || row[4]).toFixed(2)}</td>
+            <td>${parseFloat(row.nasr || row[5]).toFixed(2)}</td>
+            <td>${parseFloat(row.abdullah || row[6]).toFixed(2)}</td>
+            <td>${parseFloat(row.mahmoud || row[7]).toFixed(2)}</td>
+            <td>${parseFloat(row.abood || row[8]).toFixed(2)}</td>
+            <td>${parseFloat(row.mayyas || row[9]).toFixed(2)}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } else {
+        tbody.innerHTML = `<tr><td colspan="10" class="text-muted">لا يوجد فواتير مسجلة حالياً.</td></tr>`;
+      }
+
+      loader.style.display = 'none';
+      container.style.display = 'block';
+
+    } catch (err) {
+      console.error(err);
+      loader.innerHTML = `<span class="text-danger fw-bold">❌ حدث خطأ أثناء تحميل البيانات</span>`;
+    }
+  }
+</script>
+</body>
+</html>
