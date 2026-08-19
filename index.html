@@ -218,12 +218,16 @@
 </head>
 
 <body>
-
 <div class="header-section text-center position-relative">
-    <!-- زر سجل الحركات على اليسار -->
-    <a href="transactions.html" class="btn btn-sm btn-outline-primary position-absolute start-0 top-50 translate-middle-y ms-2 ms-sm-3" style="font-size: 0.7rem; border-radius: 10px;">
-        <i class="bi bi-receipt"></i> السجل
-    </a>
+    <!-- مجموعة أزرار السجلات على اليسار (سجل الحركات + سجل الإيداعات) -->
+    <div class="position-absolute start-0 top-50 translate-middle-y ms-2 ms-sm-3 d-flex gap-1">
+        <a href="transactions.html" class="btn btn-sm btn-outline-primary" style="font-size: 0.7rem; border-radius: 10px;">
+            <i class="bi bi-receipt"></i> السجل
+        </a>
+        <a href="deposits.html" class="btn btn-sm btn-outline-success" style="font-size: 0.7rem; border-radius: 10px;">
+            <i class="bi bi-wallet2"></i> الإيداعات
+        </a>
+    </div>
 
     <!-- العنوان النصي -->
     <h4>حسابات بيت العيلة</h4>
