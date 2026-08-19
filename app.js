@@ -1,4 +1,4 @@
-const API_URL = 'https://script.google.com/macros/s/AKfycbxMKDiaQdpzc-6RyxjjdYTPDtNFJwZEJ1OkGhzwDMDAWQY8UjIArrw5D8Lv4FTNogO00w/exec'; 
+const API_URL = 'https://script.google.com/macros/s/AKfycbzQXj_1Q4vf801S6SkXJBXGm-h4FMe5UeyMEANO09puQeejVqhJirIC7bmOF55LYa3wNA/exec'; 
 
 
 let allData = { wallets: [], transactions: [], deposits: [] };
