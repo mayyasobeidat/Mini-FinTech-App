@@ -17,7 +17,10 @@
 <div class="container card shadow-sm p-3 p-md-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="mb-0 text-success fw-bold"><i class="bi bi-wallet2 me-2"></i>سجل إيداعات العائلة</h5>
-    <a href="index.html" class="btn btn-sm btn-outline-secondary">رجوع للأرصدة $\rightarrow$</a>
+   <!-- زر الرجوع المعدل -->
+<a href="index.html" class="btn btn-sm btn-outline-secondary">
+  <i class="bi bi-arrow-left me-1"></i>رجوع للأرصدة
+</a>
   </div>
 
   <!-- فلتر الأشخاص -->
@@ -61,8 +64,10 @@
 
   window.onload = async function() {
     try {
-      const res = await fetch(`${API_URL}?action=getDeposits`);
+      // إضافة redirect: 'follow' للتعامل مع توجيهات Google Apps Script
+      const res = await fetch(`${API_URL}?action=getDeposits`, { redirect: 'follow' });
       allDeposits = await res.json();
+      
       document.getElementById('loader').style.display = 'none';
       document.getElementById('table-container').style.display = 'block';
       renderTable(allDeposits);
@@ -75,17 +80,21 @@
     const tbody = document.getElementById('deposits-body');
     tbody.innerHTML = '';
     
-    if(!data || data.length === 0) {
+    if (!data || data.length === 0) {
       tbody.innerHTML = '<tr><td colspan="4" class="text-muted">لا يوجد إيداعات مسجلة.</td></tr>';
       return;
     }
 
     data.slice().reverse().forEach(row => {
+      // تنظيف المبلغ من الفواصل والرموز لضمان التحويل الرقمي الصحيح
+      const cleanAmount = String(row[2] || '0').replace(/,/g, '').trim();
+      const amountVal = parseFloat(cleanAmount) || 0;
+
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td><small class="text-muted">${formatDate(row[0])}</small></td>
         <td class="fw-bold">${row[1] || '-'}</td>
-        <td><span class="badge badge-deposit p-2">${parseFloat(row[2] || 0).toFixed(2)} د.أ</span></td>
+        <td><span class="badge badge-deposit p-2">${amountVal.toFixed(2)} د.أ</span></td>
         <td class="text-muted small">${row[3] || '-'}</td>
       `;
       tbody.appendChild(tr);
@@ -97,7 +106,7 @@
     if (selected === 'ALL') {
       renderTable(allDeposits);
     } else {
-      const filtered = allDeposits.filter(row => row[1] && row[1].trim() === selected);
+      const filtered = allDeposits.filter(row => row[1] && String(row[1]).trim() === selected);
       renderTable(filtered);
     }
   }
@@ -105,7 +114,7 @@
   function formatDate(dateStr) {
     if (!dateStr || dateStr === '-') return '-';
     const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return dateStr;
+    if (isNaN(d.getTime())) return dateStr; // إرجاع النص الأصلي كما هو إذا تعذر تحويله لتاريخ
     return d.toLocaleString('en-GB', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:true }).toUpperCase();
   }
 </script>
