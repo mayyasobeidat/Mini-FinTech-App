@@ -41,8 +41,15 @@ function getActivities(name) {
   if (allData.transactions) {
     allData.transactions.forEach(t => {
       let personAmount = parseFloat(t[3 + nameIndex]);
-      if (!isNaN(personAmount) && personAmount > 0) {
-        acts.push({ date: t[0], type: 'med', title: t[1], amount: -personAmount });
+      
+      // 🟢 التعديل هنا: قبول جميع القيم التي لا تساوي صفراً (سالبة أو موجبة)
+      if (!isNaN(personAmount) && personAmount !== 0) {
+        acts.push({ 
+          date: t[0], 
+          type: 'med', 
+          title: t[1], 
+          amount: -personAmount // ستقوم بعكس الإشارة تلقائياً لتعديل الرصيد بشكل صحيح
+        });
       }
     });
   }
