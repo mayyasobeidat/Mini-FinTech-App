@@ -1,6 +1,5 @@
 const API_URL = 'https://script.google.com/macros/s/AKfycbzlR2y6nbCtt6CeUXaOqU_cCYUVZO4Jh-hcyizAhTQlENGqddd38hv2dYwnNJynIBGksA/exec'; 
 
-
 let allData = { wallets: [], transactions: [], deposits: [] };
 let currentPage = [];
 
@@ -42,13 +41,13 @@ function getActivities(name) {
     allData.transactions.forEach(t => {
       let personAmount = parseFloat(t[3 + nameIndex]);
       
-      // 🟢 التعديل هنا: قبول جميع القيم التي لا تساوي صفراً (سالبة أو موجبة)
+      // 🟢 قبول جميع القيم التي لا تساوي صفراً (سالبة أو موجبة)
       if (!isNaN(personAmount) && personAmount !== 0) {
         acts.push({ 
           date: t[0], 
           type: 'med', 
           title: t[1], 
-          amount: -personAmount // ستقوم بعكس الإشارة تلقائياً لتعديل الرصيد بشكل صحيح
+          amount: -personAmount // يعكس الإشارة: الخصم يقلل الرصيد، والتسوية التخفيضية تزيد الرصيد
         });
       }
     });
@@ -75,6 +74,10 @@ function initUI() {
     let balance = acts.reduce((sum, act) => sum + act.amount, 0);
 
     currentPage[index] = 0;
+    
+    // تصحيح الرصيد القريب من الصفر لتجنب إشارة -0.00
+    if (Math.abs(balance) < 0.001) balance = 0;
+
     let balClass = balance >= 0 ? 'text-pos' : 'text-neg';
 
     tabsHtml += `
@@ -128,15 +131,22 @@ function renderPage(idx) {
     html += '<div class="p-5 text-center text-muted small">لا يوجد سجل عمليات</div>';
   } else {
     pageItems.forEach(act => {
-      let isDep = act.type === 'dep';
+      // 🟢 تعديل التنسيق البصري ليقرأ القيمة الحقيقية للـ amount
+      const isPositive = act.amount > 0;
+      const isDep = act.type === 'dep';
+
       html += `
         <div class="transaction-item">
-          <div class="icon-box ${isDep ? 'icon-dep' : 'icon-med'}"><i class="bi ${isDep ? 'bi-plus-circle-fill' : 'bi-capsule'}"></i></div>
+          <div class="icon-box ${isPositive ? 'icon-dep' : 'icon-med'}">
+            <i class="bi ${isDep ? 'bi-plus-circle-fill' : (isPositive ? 'bi-arrow-down-left-circle-fill' : 'bi-capsule')}"></i>
+          </div>
           <div class="flex-grow-1 text-end">
             <span class="item-title">${act.title}</span>
             <span class="item-date">${act.date}</span>
           </div>
-          <div class="amount-tag ${isDep ? 'text-success' : 'text-danger'}">${isDep ? '+' : '-'}${Math.abs(act.amount).toFixed(2)}</div>
+          <div class="amount-tag ${isPositive ? 'text-success' : 'text-danger'}">
+            ${isPositive ? '+' : '-'}${Math.abs(act.amount).toFixed(2)}
+          </div>
         </div>`;
     });
     document.getElementById(`page-info-${idx}`).innerText = `صفحة ${currentPage[idx] + 1} من ${totalPages || 1}`;
@@ -154,7 +164,7 @@ function changePage(idx, dir) {
 window.onload = fetchData;
 window.onresize = () => { if(allData.wallets.length) allData.wallets.forEach((_, i) => renderPage(i)); };
 
- function downloadPDF(index, name) {
+function downloadPDF(index, name) {
     const btn = document.getElementById(`pdf-btn-${index}`);
     const originalBtnText = btn.innerHTML;
     btn.innerHTML = 'جاري التحضير...'; btn.disabled = true;
@@ -170,7 +180,7 @@ window.onresize = () => { if(allData.wallets.length) allData.wallets.forEach((_,
       </div>
       <table style="width:100%; border-collapse:collapse; font-family: sans-serif;">
         <thead><tr style="background:#f1f5f9;"><th style="padding:12px; text-align:right;">التاريخ</th><th style="padding:12px; text-align:right;">الحركة</th><th style="padding:12px; text-align:left;">المبلغ</th></tr></thead>
-        <tbody>${acts.map(act => `<tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:10px; font-size:12px;">${act.date}</td><td style="padding:10px;">${act.title}</td><td style="padding:10px; text-align:left; font-weight:bold; color:${act.type==='dep'?'#16a34a':'#b91c1c'}; direction:ltr;">${act.amount.toFixed(2)}</td></tr>`).join('')}</tbody>
+        <tbody>${acts.map(act => `<tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:10px; font-size:12px;">${act.date}</td><td style="padding:10px;">${act.title}</td><td style="padding:10px; text-align:left; font-weight:bold; color:${act.amount > 0 ? '#16a34a' : '#b91c1c'}; direction:ltr;">${act.amount > 0 ? '+' : '-'}${Math.abs(act.amount).toFixed(2)}</td></tr>`).join('')}</tbody>
       </table>
       <div style="margin-top:40px; text-align:center;"><p> الرصيد الإجمالي الحالي <b>${acts.reduce((sum, act) => sum + act.amount, 0).toFixed(2)} د.أ </b></p></div>`;
 
@@ -194,4 +204,4 @@ if ('serviceWorker' in navigator) {
         .then(reg => console.log('Service Worker Registered'))
         .catch(err => console.log('Service Worker Failed', err));
     });
-  }
+}
